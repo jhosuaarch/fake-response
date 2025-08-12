@@ -21,9 +21,9 @@ export default function handler(req, res) {
   // Set CORS headers
   res.setHeader('Access-Control-Allow-Origin', '*');
 
-  // Function to create proper HTML document
-  const createHtmlResponse = (content) => {
-    return `<!DOCTYPE html><html><head><title>API Response</title></head><body>${content}</body></html>`;
+  // Function to wrap response in HTML body
+  const wrapInBody = (content) => {
+    return `<html><body>${content}</body></html>`;
   };
 
   // Handle GET request
@@ -36,12 +36,12 @@ export default function handler(req, res) {
       const result = `${hash};${x1};2025-09-08 16:06:02`;
       const response = Buffer.from(result).toString('base64');
       
-      // Return as complete HTML document
+      // Return as HTML with body tag
       res.setHeader('Content-Type', 'text/html');
-      return res.status(200).send(createHtmlResponse(response));
+      return res.status(200).send(wrapInBody(response));
     } else {
       res.setHeader('Content-Type', 'text/html');
-      return res.status(400).send(createHtmlResponse("Error: Please provide both x1 and x2 parameters."));
+      return res.status(400).send(wrapInBody("Error: Please provide both x1 and x2 parameters."));
     }
   }
 
@@ -50,9 +50,11 @@ export default function handler(req, res) {
     try {
       let x1, x2;
       
+      // Handle both JSON and form-urlencoded POST data
       if (req.headers['content-type'] === 'application/json') {
         ({ x1, x2 } = req.body);
       } else {
+        // For form data or other formats
         const body = typeof req.body === 'string' ? require('querystring').parse(req.body) : req.body;
         x1 = body.x1;
         x2 = body.x2;
@@ -60,7 +62,7 @@ export default function handler(req, res) {
 
       if (!x1 || !x2) {
         res.setHeader('Content-Type', 'text/html');
-        return res.status(400).send(createHtmlResponse("Error: Please provide both x1 and x2 in the request body."));
+        return res.status(400).send(wrapInBody("Error: Please provide both x1 and x2 in the request body."));
       }
 
       const randomString = generateRandomString();
@@ -68,14 +70,16 @@ export default function handler(req, res) {
       const result = `${hash};${x1};2025-09-08 16:06:02`;
       const response = Buffer.from(result).toString('base64');
 
+      // Return as HTML with body tag
       res.setHeader('Content-Type', 'text/html');
-      return res.status(200).send(createHtmlResponse(response));
+      return res.status(200).send(wrapInBody(response));
     } catch (error) {
       res.setHeader('Content-Type', 'text/html');
-      return res.status(500).send(createHtmlResponse(`Error: Internal server error - ${error.message}`));
+      return res.status(500).send(wrapInBody(`Error: Internal server error - ${error.message}`));
     }
   }
 
+  // Handle other methods
   res.setHeader('Content-Type', 'text/html');
-  return res.status(405).send(createHtmlResponse("Error: Method not allowed"));
+  return res.status(405).send(wrapInBody("Error: Method not allowed"));
 }
