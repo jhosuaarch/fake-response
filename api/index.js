@@ -21,6 +21,11 @@ export default function handler(req, res) {
   // Set CORS headers
   res.setHeader('Access-Control-Allow-Origin', '*');
 
+  // Function to wrap response in HTML body
+  const wrapInBody = (content) => {
+    return `<html><body>${content}</body></html>`;
+  };
+
   // Handle GET request
   if (req.method === 'GET') {
     const { x1, x2 } = req.query;
@@ -31,12 +36,12 @@ export default function handler(req, res) {
       const result = `${hash};${x1};2025-09-08 16:06:02`;
       const response = Buffer.from(result).toString('base64');
       
-      // Return as plain text
-      res.setHeader('Content-Type', 'text/plain');
-      return res.status(200).send(response);
+      // Return as HTML with body tag
+      res.setHeader('Content-Type', 'text/html');
+      return res.status(200).send(wrapInBody(response));
     } else {
-      res.setHeader('Content-Type', 'text/plain');
-      return res.status(400).send("Error: Please provide both x1 and x2 parameters.");
+      res.setHeader('Content-Type', 'text/html');
+      return res.status(400).send(wrapInBody("Error: Please provide both x1 and x2 parameters."));
     }
   }
 
@@ -56,8 +61,8 @@ export default function handler(req, res) {
       }
 
       if (!x1 || !x2) {
-        res.setHeader('Content-Type', 'text/plain');
-        return res.status(400).send("Error: Please provide both x1 and x2 in the request body.");
+        res.setHeader('Content-Type', 'text/html');
+        return res.status(400).send(wrapInBody("Error: Please provide both x1 and x2 in the request body."));
       }
 
       const randomString = generateRandomString();
@@ -65,16 +70,16 @@ export default function handler(req, res) {
       const result = `${hash};${x1};2025-09-08 16:06:02`;
       const response = Buffer.from(result).toString('base64');
 
-      // Return as plain text
-      res.setHeader('Content-Type', 'text/plain');
-      return res.status(200).send(response);
+      // Return as HTML with body tag
+      res.setHeader('Content-Type', 'text/html');
+      return res.status(200).send(wrapInBody(response));
     } catch (error) {
-      res.setHeader('Content-Type', 'text/plain');
-      return res.status(500).send(`Error: Internal server error - ${error.message}`);
+      res.setHeader('Content-Type', 'text/html');
+      return res.status(500).send(wrapInBody(`Error: Internal server error - ${error.message}`));
     }
   }
 
   // Handle other methods
-  res.setHeader('Content-Type', 'text/plain');
-  return res.status(405).send("Error: Method not allowed");
+  res.setHeader('Content-Type', 'text/html');
+  return res.status(405).send(wrapInBody("Error: Method not allowed"));
 }
