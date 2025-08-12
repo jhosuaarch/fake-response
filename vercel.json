@@ -3,20 +3,13 @@
   "builds": [
     {
       "src": "api/index.php",
-      "use": "@vercel/php@0.6.0",
-      "config": {
-        "maxDuration": 10,
-        "includeFiles": "api/**"
-      }
+      "use": "@vercel-community/php"
     }
   ],
   "routes": [
     {
       "src": "/(.*)",
-      "dest": "/api/index.php",
-      "headers": {
-        "Content-Type": "text/html"
-      }
+      "dest": "/api/index.php"
     }
   ]
 }
