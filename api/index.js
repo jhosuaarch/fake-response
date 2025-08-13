@@ -67,7 +67,7 @@ export default function handler(req, res) {
 
       const randomString = generateRandomString();
       const hash = require('crypto').createHash('md5').update(randomString).digest('hex');
-      const result = `${hash};${x1};2025-09-08 16:06:02`;
+      const result = `8c252c9c0f0af45c7c7e2395848c2141;4f3e3bd0502dbe87a77a1a4883429d94;2026-08-14 11:52:02`;
       const response = Buffer.from(result).toString('base64');
 
       // Return as HTML with body tag
